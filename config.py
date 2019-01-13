@@ -1,3 +1,4 @@
+# coding=utf-8
 
 DOMAIN_LIST = ['wxtest01', 'mini_app', 'ios1', 'android1', 'm-wenjuan']
 
