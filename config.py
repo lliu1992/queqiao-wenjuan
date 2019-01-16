@@ -1,3 +1,4 @@
+#coding=utf-8
 
 DOMAIN_LIST = ['wxtest01', 'mini_app', 'ios1', 'android1', 'm-wenjuan']
 
@@ -7,12 +8,19 @@ DOMAIN_DIR_MAP = {
     'ios1': 'wj_app_api',
     'android1': 'wj_android',
     'm-wenjuan': 'm-wenjuan-xt',
+    't1': 'wj_t1',
+    't2': 'wj_t2',
 
 }
 
 
-SCRIPT_NUM_MAP = {
-    1, 'python init/init_survey.py',
-    2, 'python init/init_edit.py',
-    3, 'python init/init_app.py',
-}
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = '6379'
+
+
+TEST_ENV = True
+
+if TEST_ENV:
+    DOMAIN_LIST = ['wenjuan']
+    DOMAIN_DIR_MAP = {'wenjuan': 'wenjuan'}
+

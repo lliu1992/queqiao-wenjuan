@@ -1,18 +1,63 @@
+#coding=utf-8
 
 import os
-
 import subprocess
 import functools
+import time
+
+
+import redis
 
 import config
 
 
+pool = redis.ConnectionPool(
+    host=config.REDIS_HOST, port=config.REDIS_PORT
+)
+
+
+def get_redis_conn():
+    return redis.Redis(connection_pool=pool)
+
+redis_client = get_redis_conn()
+
+
+def get_branch_on_domain(domain):
+    branch = redis_client.get(domain)
+    if not branch:
+        branch = get_cur_branch_on_domain(domain)
+    
+    return branch
+
+
+    
+        
 def get_cur_branch_on_domain(domain):
     cwd = get_cwd(domain)
     p = subprocess.Popen('git branch', shell=True, stdout=subprocess.PIPE, cwd=cwd)
     branches_str = p.stdout.read()
     cur_branch = get_cur_branch(branches_str)
+    
     return cur_branch
+
+
+
+def get_branch_updatetime_on_domain(domain):
+    key = '{0}_{1}'.format(domain, 'update')
+    update_time = redis_client.get(key)
+    
+    if not update_time:
+        update_time = time.strftime("%Y-%m-%d %H:%M:%S")
+        
+    return update_time
+
+
+def set_branch_updatetime_on_domain(domain):
+    key = '{0}_{1}'.format(domain, 'update')
+    update_time = time.strftime("%Y-%m-%d %H:%M:%S")
+
+    redis_client.set(key, update_time)
+
 
 
 def get_cwd(domain):
@@ -38,12 +83,17 @@ def check_out_branch(domain, branch):
     """
     cwd = get_cwd(domain)
     subprocess.call('git checkout .', shell=True, cwd=cwd)
+    subprocess.call('git checkout master', shell=True, cwd=cwd)
     subprocess.call('git pull', shell=True, stdout=subprocess.PIPE, cwd=cwd)
-    if domain in ['wxtest01', 'wj_app_api']:
-        subprocess.call('cp -f openapi/config.py_bak openapi/config.py', shell=True, cwd=cwd)
     subprocess.call('git checkout {0}'.format(branch), shell=True, stdout=subprocess.PIPE, cwd=cwd)
+    branch =  get_cur_branch_on_domain(domain)
+    set_branch_on_domain(domain, branch)
 
-    return get_cur_branch_on_domain(domain)
+    return branch
+
+
+def set_branch_on_domain(domain, branch):
+    redis_client.set(domain, branch)
 
 
 def auth_params(method):

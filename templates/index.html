@@ -1,11 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style type="text/css">
+
+        .queqiao{
+            margin: 150px;
+        }
+
+
+        th{
+            height: 80px;
+            width: 200px;
+        }
+
+
+    </style>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-<div>Deploy for Wenjuaner</div>
-{{domain_list}}
+
+<h1 align="center">问卷鹊桥</h1>
+
+<div class="queqiao">
+    <table border="1">
+        <tr>
+            <th>域名</th>
+            <th>当前分支</th>
+            <th>最近一次更新时间</th>
+            <th>更新</th>
+            <th>切换至其他分支</th>
+            <th>切换</th>
+        </tr>
+
+        {% for domain_data in domain_info_list %}
+        <tr>
+            <th>{{ domain_data[0] }}</th>
+            <th>{{ domain_data[1] }}</th>
+            <th>{{ domain_data[2] }}</th>
+            <th>---</th>
+            <th>---</th>
+            <th>---</th>
+
+        </tr>
+        {% end %}
+
+    </table>
+</div>
+
 </body>
 </html>

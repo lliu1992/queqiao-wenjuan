@@ -1,3 +1,4 @@
+#coding=utf-8
 
 import os
 
@@ -20,6 +21,6 @@ if __name__ == '__main__':
     application.settings = app_settings
 
     server = tornado.httpserver.HTTPServer(application)
-    server.bind(8888)
+    server.bind(9900)
     server.start(2)     # multipul process 2.
     tornado.ioloop.IOLoop.instance().start()
