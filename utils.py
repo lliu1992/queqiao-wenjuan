@@ -30,8 +30,6 @@ def get_branch_on_domain(domain):
     
     return branch
 
-
-    
         
 def get_cur_branch_on_domain(domain):
     cwd = get_cwd(domain)
@@ -65,6 +63,8 @@ def get_cwd(domain):
     domain_dir_name = config.DOMAIN_DIR_MAP.get(domain)
     pwd = os.getcwd()
     parant_path = os.path.abspath(os.path.dirname(pwd) + os.path.sep + ".")
+    print 'parant_path:', parant_path
+    print 'domain_dir_name:', domain_dir_name
     return os.path.join(parant_path, domain_dir_name)
 
 

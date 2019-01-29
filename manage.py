@@ -6,21 +6,19 @@ import tornado.httpserver
 import tornado.ioloop
 
 import urls
+import config
 
-app_settings = {
-    'static_path': os.path.join(os.path.dirname(__file__), 'static'),
-    'template_path': os.path.join(os.path.dirname(__file__), 'templates'),
 
-}
+def main():
+    print('======wj_deploy started=====')
+    application = urls.make_app()
+    application.settings = config.app_settings
+    server = tornado.httpserver.HTTPServer(application)
+    server.bind(9800)
+    server.start(1)  # multipul process 2.
+    tornado.ioloop.IOLoop.instance().start()
 
 
 if __name__ == '__main__':
+    main()
 
-    print('======wj_deploy started=====')
-    application = urls.make_app()
-    application.settings = app_settings
-
-    server = tornado.httpserver.HTTPServer(application)
-    server.bind(9900)
-    server.start(2)     # multipul process 2.
-    tornado.ioloop.IOLoop.instance().start()

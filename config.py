@@ -1,5 +1,15 @@
+# coding=utf-8
 
-#coding=utf-8
+import os
+
+
+app_settings = {
+        'static_path': os.path.join(os.path.dirname(__file__), 'static'),
+        'template_path': os.path.join(os.path.dirname(__file__), 'templates'),
+        'root_path': os.path.join(os.path.dirname(__file__)),
+        'debug': True,
+
+    }
 
 
 DOMAIN_LIST = ['wxtest01', 'mini_app', 'ios1', 'android1', 'm-wenjuan']

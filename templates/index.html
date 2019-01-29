@@ -1,52 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <style type="text/css">
-
-        .queqiao{
-            margin: 150px;
-        }
-
-
-        th{
-            height: 80px;
-            width: 200px;
-        }
-
-
-    </style>
+    <script src="{{ static_url('layui/layui.js')}}" charset="utf-8"></script>
+    <script src="{{ static_url('layui/jquery_1.10.2.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ static_url('layui/css/layui.css')}}">
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-xs" lay-event="update">编辑</a>
+</script>
 <h1 align="center">问卷鹊桥</h1>
 
 <div class="queqiao">
-    <table border="1">
-        <tr>
-            <th>域名</th>
-            <th>当前分支</th>
-            <th>最近一次更新时间</th>
-            <th>更新</th>
-            <th>切换至其他分支</th>
-            <th>切换</th>
-        </tr>
-
-        {% for domain_data in domain_info_list %}
-        <tr>
-            <th>{{ domain_data[0] }}</th>
-            <th>{{ domain_data[1] }}</th>
-            <th>{{ domain_data[2] }}</th>
-            <th>---</th>
-            <th>---</th>
-            <th>---</th>
-
-        </tr>
-        {% end %}
-
-    </table>
+   <table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
+
+
+<script>
+layui.use('table', function(){
+  var table = layui.table;
+  function getDomainData() {
+      var respData = '';
+
+      $.ajax({
+          type: 'get',
+          url: '/get_domain_data/',
+          async: false,
+          success: function (data) {
+              respData = data.data
+
+          }
+      });
+
+      return respData;
+
+  };
+
+  function updateAndDeploy(obj){
+      var data = obj.data;
+      var request_data = {'domain': data['domain']}
+      $.ajax({
+          type: 'post',
+          url: '/upload_and_deploy/',
+          data: request_data,
+          async: false,
+          success: function (data) {
+              if (data.status_code == 1){
+                   respData = data.data;
+                   alert(3333)
+                   obj.update({
+                        update_time: respData['update_time']
+                   });
+              }
+          }
+      });
+
+  }
+
+
+table.render({
+    elem: '#test'
+    ,data:getDomainData()
+    ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+    ,cols: [[
+      {field:'domain', width:80, title: '域名', width: '10%'}
+      ,{field:'branch', width:80, title: '当前分支', width: '10%'}
+      ,{field:'update_time', width:80, title: 'lastest更新时间',width: '15%'}
+      ,{field:'sign', title: '更新当前分支', width: '5%', minWidth: 20,toolbar: '#barDemo'} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+      ,{field:'experience', title: '切换并部署分支',  width: '8%'}
+      ,{field:'score', title: '切换', }
+    ]]
+  });
+
+
+table.on('tool(test)', function(obj){
+    if(obj.event=="update"){
+        updateAndDeploy(obj)
+    }
+  });
+});
+</script>
+
 
 </body>
 </html>
